@@ -25,6 +25,11 @@ teardown() {
 
     [ "${lines[0]}" = "create a new key for user@example.com" ]
     [ -f "$HOME/.ssh/config.d/user@example.com.config" ]
+
+    cat <<EOF | diff "$HOME/.ssh/config.d/user@example.com.config" -
+Match User user Host example.com
+  IdentityFile ~/.ssh/user@example.com
+EOF
 }
 
 @test "Missing parameter" {

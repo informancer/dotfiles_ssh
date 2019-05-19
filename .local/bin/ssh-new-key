@@ -19,4 +19,7 @@ mkdir -p ${confdir}
 
 confname="${confdir}/${user}@${host}.config"
 echo $confname
-touch ${confname}
+cat <<EOF > $confname
+Match User ${user} Host ${host}
+  IdentityFile ~/.ssh/${user}@${host}
+EOF
