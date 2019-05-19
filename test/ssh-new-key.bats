@@ -4,12 +4,27 @@
 # Guard against bats executing this twice
 if [ -z "$TEST_PATH_INITIALIZED" ]; then
     PATH="${BATS_TEST_DIRNAME}/../.local/bin:$PATH"
+    SSH_TEST_DIR="${BATS_TMPDIR}/ssh-new-key"
 fi
-       
+
+setup() {
+    mkdir "${SSH_TEST_DIR}"
+}
+
+teardown() {
+    rm -rf "${SSH_TEST_DIR}"
+}
+
 @test "Simple call" {
+    local var HOME="${SSH_TEST_DIR}"
     run ssh-new-key user example.com
-    [ "$status" -eq 0 ]
+    if [ "${status}" -ne 0 ]; then
+	echo "actual: ${status}"
+	return ${status}
+    fi
+
     [ "${lines[0]}" = "create a new key for user@example.com" ]
+    [ -f "$HOME/.ssh/config.d/user@example.com.config" ]
 }
 
 @test "Missing parameter" {
