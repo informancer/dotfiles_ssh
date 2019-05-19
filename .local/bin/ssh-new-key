@@ -1,5 +1,13 @@
-
 #!/usr/bin/env bash
 # -*- sh -*-
 
-echo create a new key
+usage() { echo "Usage: $(basename $0) <hostname>" 1>&2; }
+
+if [ $# -ne 1 ]; then
+    usage;
+    exit 64;
+fi
+
+host=$1
+
+echo create a new key for $host
