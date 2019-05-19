@@ -1,7 +1,24 @@
 #!/usr/bin/env bash
 # -*- sh -*-
 
-usage() { echo "Usage: $(basename $0) <user> <hostname>" 1>&2; }
+usage() { echo "Usage: $(basename $0) [--overwrite-config] <user> <hostname>" 1>&2; }
+
+
+OPTS=`getopt -o '' --long 'overwrite-config' -n $(basename $0) -- "$@"`
+
+if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
+
+eval set -- "$OPTS"
+
+overwrite_config=false
+
+while true; do
+    case "$1" in
+	"--overwrite-config") overwrite_config=true; shift ;;
+	-- ) shift; break ;;
+	* ) break ;;
+    esac
+done
 
 if [ $# -ne 2 ]; then
     usage;
@@ -14,8 +31,9 @@ host=$2
 confdir="$HOME/.ssh/config.d"
 confname="${confdir}/${user}@${host}.config"
 
-if [ -f "${confname}" ]; then
-   echo "File \"${confname}\" already exists"
+if [ "${overwrite_config}" = false ] && [ -f "${confname}" ]; then
+    echo "File \"${confname}\" already exists"
+    echo "Use --overwrite-config to force recreation of the configuration"
    exit 1
 fi
 
