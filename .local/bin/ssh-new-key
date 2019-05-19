@@ -11,14 +11,21 @@ fi
 user=$1
 host=$2
 
+confdir="$HOME/.ssh/config.d"
+confname="${confdir}/${user}@${host}.config"
+
+if [ -f "${confname}" ]; then
+   echo "File \"${confname}\" already exists"
+   exit 1
+fi
+
 echo create a new key for $user@$host
 
-confdir="$HOME/.ssh/config.d"
 echo ${confdir}
 mkdir -p ${confdir}
 
-confname="${confdir}/${user}@${host}.config"
 echo $confname
+
 cat <<EOF > $confname
 Match User ${user} Host ${host}
   IdentityFile ~/.ssh/${user}@${host}

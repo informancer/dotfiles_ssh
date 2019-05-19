@@ -41,3 +41,17 @@ EOF
     [ "$status" -eq 64 ]
     [ "${lines[0]}" = "Usage: ssh-new-key <user> <hostname>" ]
 }
+
+@test "Config file already exists" {
+    local var HOME="${SSH_TEST_DIR}"
+    mkdir -p "$HOME/.ssh/config.d"
+    touch "$HOME/.ssh/config.d/user@example.com.config"
+    run ssh-new-key user example.com
+    if [ "${status}" -ne 1 ]; then
+	echo "actual: ${status}"
+	return 1
+    fi
+
+    [ "${lines[0]}" = "File \"$HOME/.ssh/config.d/user@example.com.config\" already exists" ]
+
+}
