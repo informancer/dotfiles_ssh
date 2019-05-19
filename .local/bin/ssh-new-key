@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # -*- sh -*-
 
-usage() { echo "Usage: $(basename $0) [-k <keyfile>] [--overwrite-config] <user> <hostname>" 1>&2; }
+usage() { echo "Usage: $(basename $0) [-p passphrase] [-k <keyfile>] [--overwrite-config] <user> <hostname>" 1>&2; }
 
-OPTS=`getopt -o k: --long overwrite-config,keyfile: -n $(basename $0) -- "$@"`
+OPTS=`getopt -o k:p: --long overwrite-config,keyfile: -n $(basename $0) -- "$@"`
 
 if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
@@ -15,6 +15,7 @@ while true; do
     case "$1" in
 	"-k"|"--keyfile") keyfile="$2"; shift; shift;;
 	"--overwrite-config") overwrite_config=true; shift ;;
+	"-p") passphrase="$2"; shift; shift;;
 	-- ) shift; break ;;
 	* ) break ;;
     esac
@@ -41,11 +42,16 @@ if [ -z ${keyfile+x} ]; then
     keyfile="${user}@${host}"
 fi
 
+if [ ! -z ${passphrase+x} ]; then
+    passphrase_opt="-N $passphrase"
+fi
+
 echo create a new key for $user@$host
 
 echo ${confdir}
 mkdir -p ${confdir}
 
+ssh-keygen ${passphrase_opt} -f "$HOME/.ssh/${keyfile}"
 echo $confname
 
 cat <<EOF > $confname

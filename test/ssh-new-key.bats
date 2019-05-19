@@ -17,24 +17,27 @@ teardown() {
 
 @test "Simple call" {
     local var HOME="${SSH_TEST_DIR}"
-    run ssh-new-key user example.com
+    run ssh-new-key -p passphrase user example.com 
     if [ "${status}" -ne 0 ]; then
 	echo "actual: ${status}"
 	return ${status}
     fi
 
-    [ "${lines[0]}" = "create a new key for user@example.com" ]
+    if [ "${lines[0]}" != "create a new key for user@example.com" ]; then
+       echo "actual: ${lines[0]}"
+    fi
     [ -f "$HOME/.ssh/config.d/user@example.com.config" ]
 
     cat <<EOF | diff "$HOME/.ssh/config.d/user@example.com.config" -
 Match User user Host example.com
   IdentityFile ~/.ssh/user@example.com
 EOF
+    [ -f "$HOME/.ssh/user@example.com" ]
 }
 
 @test "Simple call (alternative user and host)" {
     local var HOME="${SSH_TEST_DIR}"
-    run ssh-new-key other alternative.com
+    run ssh-new-key -p passphrase other alternative.com
     if [ "${status}" -ne 0 ]; then
 	echo "actual: ${status}"
 	return ${status}
@@ -47,17 +50,18 @@ EOF
 Match User other Host alternative.com
   IdentityFile ~/.ssh/other@alternative.com
 EOF
+    [ -f "$HOME/.ssh/other@alternative.com" ]
 }
 
 
 @test "Missing parameter" {
     run ssh-new-key user
     [ "$status" -eq 64 ]
-    [ "${lines[0]}" = "Usage: ssh-new-key [-k <keyfile>] [--overwrite-config] <user> <hostname>" ]
+    [ "${lines[0]}" = "Usage: ssh-new-key [-p passphrase] [-k <keyfile>] [--overwrite-config] <user> <hostname>" ]
 
     run ssh-new-key example.com
     [ "$status" -eq 64 ]
-    [ "${lines[0]}" = "Usage: ssh-new-key [-k <keyfile>] [--overwrite-config] <user> <hostname>" ]
+    [ "${lines[0]}" = "Usage: ssh-new-key [-p passphrase] [-k <keyfile>] [--overwrite-config] <user> <hostname>" ]
 }
 
 @test "Config file already exists and --overwrite-config is not given" {
@@ -81,7 +85,7 @@ EOF
     cat <<EOF > "$HOME/.ssh/config.d/user@example.com.config"
 Content to overwrite
 EOF
-    run ssh-new-key --overwrite-config user example.com
+    run ssh-new-key -p passphrase --overwrite-config user example.com
     if [ "${status}" -ne 0 ]; then
 	echo "actual: ${status}"
 	return ${status}
@@ -94,6 +98,7 @@ EOF
 Match User user Host example.com
   IdentityFile ~/.ssh/user@example.com
 EOF
+    [ -f "$HOME/.ssh/user@example.com" ]
 }
 
 @test "Pass key name as short parameter" {
@@ -111,6 +116,7 @@ EOF
 Match User user Host example.com
   IdentityFile ~/.ssh/given
 EOF
+    [ -f "$HOME/.ssh/given" ]
 }
 
 @test "Pass key name as long parameter" {
@@ -128,4 +134,5 @@ EOF
 Match User user Host example.com
   IdentityFile ~/.ssh/given
 EOF
+    [ -f "$HOME/.ssh/given" ]
 }
