@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 # -*- sh -*-
 
-usage() { echo "Usage: $(basename $0) [--overwrite-config] <user> <hostname>" 1>&2; }
+usage() { echo "Usage: $(basename $0) [-k <keyfile>] [--overwrite-config] <user> <hostname>" 1>&2; }
 
-
-OPTS=`getopt -o '' --long 'overwrite-config' -n $(basename $0) -- "$@"`
+OPTS=`getopt -o k: --long overwrite-config,keyfile: -n $(basename $0) -- "$@"`
 
 if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
@@ -14,6 +13,7 @@ overwrite_config=false
 
 while true; do
     case "$1" in
+	"-k"|"--keyfile") keyfile="$2"; shift; shift;;
 	"--overwrite-config") overwrite_config=true; shift ;;
 	-- ) shift; break ;;
 	* ) break ;;
@@ -37,6 +37,10 @@ if [ "${overwrite_config}" = false ] && [ -f "${confname}" ]; then
    exit 1
 fi
 
+if [ -z ${keyfile+x} ]; then
+    keyfile="${user}@${host}"
+fi
+
 echo create a new key for $user@$host
 
 echo ${confdir}
@@ -46,5 +50,5 @@ echo $confname
 
 cat <<EOF > $confname
 Match User ${user} Host ${host}
-  IdentityFile ~/.ssh/${user}@${host}
+  IdentityFile ~/.ssh/${keyfile}
 EOF
