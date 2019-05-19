@@ -7,13 +7,17 @@ if [ -z "$TEST_PATH_INITIALIZED" ]; then
 fi
        
 @test "Simple call" {
-    run ssh-new-key example.com
+    run ssh-new-key user example.com
     [ "$status" -eq 0 ]
-    [ "${lines[0]}" = "create a new key for example.com" ]
+    [ "${lines[0]}" = "create a new key for user@example.com" ]
 }
 
-@test "Missing host param" {
+@test "Missing parameter" {
+    run ssh-new-key user
+    [ "$status" -eq 64 ]
+    [ "${lines[0]}" = "Usage: ssh-new-key <user> <hostname>" ]
+
     run ssh-new-key example.com
     [ "$status" -eq 64 ]
-    [ "${lines[0]}" = "Usage: ssh-new-key <hostname>" ]
+    [ "${lines[0]}" = "Usage: ssh-new-key <user> <hostname>" ]
 }
