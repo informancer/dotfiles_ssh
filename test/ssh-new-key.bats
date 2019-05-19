@@ -32,6 +32,24 @@ Match User user Host example.com
 EOF
 }
 
+@test "Simple call (alternative user and host)" {
+    local var HOME="${SSH_TEST_DIR}"
+    run ssh-new-key other alternative.com
+    if [ "${status}" -ne 0 ]; then
+	echo "actual: ${status}"
+	return ${status}
+    fi
+
+    [ "${lines[0]}" = "create a new key for other@alternative.com" ]
+    [ -f "$HOME/.ssh/config.d/other@alternative.com.config" ]
+
+    cat <<EOF | diff "$HOME/.ssh/config.d/other@alternative.com.config" -
+Match User other Host alternative.com
+  IdentityFile ~/.ssh/other@alternative.com
+EOF
+}
+
+
 @test "Missing parameter" {
     run ssh-new-key user
     [ "$status" -eq 64 ]
