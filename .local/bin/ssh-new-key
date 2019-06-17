@@ -50,6 +50,7 @@ echo create a new key for $user@$host
 
 echo ${confdir}
 mkdir -p ${confdir}
+chmod 700 "${confdir}"
 
 ssh-keygen ${passphrase_opt} -f "$HOME/.ssh/${keyfile}"
 echo $confname

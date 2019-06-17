@@ -31,6 +31,10 @@ teardown() {
 	echo Rights $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config");
 	return 1
     fi
+    if [ $(stat -c %a "$HOME/.ssh/config.d")  != 700 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d");
+	return 1
+    fi
 
 
     cat <<EOF | diff "$HOME/.ssh/config.d/user@example.com.config" -
@@ -56,6 +60,10 @@ EOF
     [ -f "$HOME/.ssh/config.d/other@alternative.com.config" ]
     if [ $(stat -c %a "$HOME/.ssh/config.d/other@alternative.com.config")  != 600 ]; then
 	echo Rights $(stat -c %a "$HOME/.ssh/config.d/other@alternative.com.config");
+	return 1
+    fi
+    if [ $(stat -c %a "$HOME/.ssh/config.d")  != 700 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d");
 	return 1
     fi
 
@@ -114,6 +122,10 @@ EOF
 	echo Rights $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config");
 	return 1
     fi
+    if [ $(stat -c %a "$HOME/.ssh/config.d")  != 700 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d");
+	return 1
+    fi
 
     cat <<EOF | diff "$HOME/.ssh/config.d/user@example.com.config" -
 Match User user Host example.com
@@ -140,6 +152,10 @@ EOF
 	echo Rights $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config");
 	return 1
     fi
+    if [ $(stat -c %a "$HOME/.ssh/config.d")  != 700 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d");
+	return 1
+    fi
 
     cat <<EOF | diff "$HOME/.ssh/config.d/user@example.com.config" -
 Match User user Host example.com
@@ -164,6 +180,10 @@ EOF
     [ -f "$HOME/.ssh/config.d/user@example.com.config" ]
     if [ $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config")  != 600 ]; then
 	echo Rights $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config");
+	return 1
+    fi
+    if [ $(stat -c %a "$HOME/.ssh/config.d")  != 700 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d");
 	return 1
     fi
 
