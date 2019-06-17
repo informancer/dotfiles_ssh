@@ -54,6 +54,9 @@ mkdir -p ${confdir}
 ssh-keygen ${passphrase_opt} -f "$HOME/.ssh/${keyfile}"
 echo $confname
 
+touch "$confname"
+chmod 600 "$confname"
+
 cat <<EOF > $confname
 Match User ${user} Host ${host}
   IdentityFile ~/.ssh/${keyfile}

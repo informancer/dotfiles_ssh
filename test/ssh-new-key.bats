@@ -27,12 +27,21 @@ teardown() {
        echo "actual: ${lines[0]}"
     fi
     [ -f "$HOME/.ssh/config.d/user@example.com.config" ]
+    if [ $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config")  != 600 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config");
+	return 1
+    fi
+
 
     cat <<EOF | diff "$HOME/.ssh/config.d/user@example.com.config" -
 Match User user Host example.com
   IdentityFile ~/.ssh/user@example.com
 EOF
     [ -f "$HOME/.ssh/user@example.com" ]
+    if [ $(stat -c %a "$HOME/.ssh/user@example.com")  != 600 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/user@example.com");
+	return 1
+    fi
 }
 
 @test "Simple call (alternative user and host)" {
@@ -45,12 +54,20 @@ EOF
 
     [ "${lines[0]}" = "create a new key for other@alternative.com" ]
     [ -f "$HOME/.ssh/config.d/other@alternative.com.config" ]
+    if [ $(stat -c %a "$HOME/.ssh/config.d/other@alternative.com.config")  != 600 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d/other@alternative.com.config");
+	return 1
+    fi
 
     cat <<EOF | diff "$HOME/.ssh/config.d/other@alternative.com.config" -
 Match User other Host alternative.com
   IdentityFile ~/.ssh/other@alternative.com
 EOF
     [ -f "$HOME/.ssh/other@alternative.com" ]
+    if [ $(stat -c %a "$HOME/.ssh/other@alternative.com")  != 600 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/other@alternative.com");
+	return 1
+    fi
 }
 
 
@@ -93,12 +110,20 @@ EOF
 
     [ "${lines[0]}" = "create a new key for user@example.com" ]
     [ -f "$HOME/.ssh/config.d/user@example.com.config" ]
+    if [ $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config")  != 600 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config");
+	return 1
+    fi
 
     cat <<EOF | diff "$HOME/.ssh/config.d/user@example.com.config" -
 Match User user Host example.com
   IdentityFile ~/.ssh/user@example.com
 EOF
     [ -f "$HOME/.ssh/user@example.com" ]
+    if [ $(stat -c %a "$HOME/.ssh/user@example.com")  != 600 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/user@example.com");
+	return 1
+    fi
 }
 
 @test "Pass key name as short parameter" {
@@ -111,12 +136,20 @@ EOF
 
     [ "${lines[0]}" = "create a new key for user@example.com" ]
     [ -f "$HOME/.ssh/config.d/user@example.com.config" ]
+    if [ $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config")  != 600 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config");
+	return 1
+    fi
 
     cat <<EOF | diff "$HOME/.ssh/config.d/user@example.com.config" -
 Match User user Host example.com
   IdentityFile ~/.ssh/given
 EOF
     [ -f "$HOME/.ssh/given" ]
+    if [ $(stat -c %a "$HOME/.ssh/given")  != 600 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config");
+	return 1
+    fi
 }
 
 @test "Pass key name as long parameter" {
@@ -129,10 +162,18 @@ EOF
 
     [ "${lines[0]}" = "create a new key for user@example.com" ]
     [ -f "$HOME/.ssh/config.d/user@example.com.config" ]
+    if [ $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config")  != 600 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config");
+	return 1
+    fi
 
     cat <<EOF | diff "$HOME/.ssh/config.d/user@example.com.config" -
 Match User user Host example.com
   IdentityFile ~/.ssh/given
 EOF
     [ -f "$HOME/.ssh/given" ]
+    if [ $(stat -c %a "$HOME/.ssh/given")  != 600 ]; then
+	echo Rights $(stat -c %a "$HOME/.ssh/config.d/user@example.com.config");
+	return 1
+    fi
 }
